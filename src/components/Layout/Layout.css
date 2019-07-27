@@ -1,0 +1,203 @@
+.ui {
+  z-index: 3;
+  transition: opacity 1s;
+}
+
+.ui.hideUI {
+  opacity: 0;
+}
+
+.ui.showUI {
+  opacity: 1;
+}
+
+.layout {
+  position:relative;
+  height: 100%;
+  z-index: 0;
+}
+
+.hideCursor {
+  cursor: none;
+}
+
+header {
+  position:absolute;
+  text-align: justify;
+  display: flex;
+  transition: left 1s;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 3;
+}
+
+header.showTitle {
+  left:0px;
+}
+
+header.hideTitle {
+  left:-451px;
+}
+
+.toggleTitleButton {
+  height: 46px;
+  width: 46px;
+  fill: #ddd;
+}
+
+.title {
+  font-size: 20px;
+  font-family:  Arial;
+  color: white;
+  width: 450px;
+  height: auto;
+  padding: 10px 10px;
+
+  text-align: justify;
+  transition: width 1s;
+}
+
+.toggleButton {
+  cursor: pointer;
+}
+
+.navButton {
+  position: absolute;
+  cursor: pointer;
+  top: 50%;
+  transform: translate(0, -50%);
+  width: 40px;
+  height: 40px;
+  fill: #eee;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 3;
+}
+
+.prevButton {
+  left: 0;
+}
+
+.nextButton {
+  right: 0;
+}
+
+.info {
+  color: #ddd;
+  z-index: 3;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+  transition: left 1s;
+  padding: 5px;
+}
+
+.info.showInfo {
+  left: 0;
+}
+
+.info.hideInfo {
+  /* left: -281px; with nsfw checkbox */
+  left: -201px;
+}
+
+
+.infoButtons {
+  text-align: center;
+  width: 200px;
+  /* width: 280px; with nsfw checkbox */
+}
+
+.infoRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+.infoButtons a {
+  color: #ddd;
+  text-decoration: none;
+}
+
+.infoButtons a:hover {
+  text-decoration: underline #bbb dotted;
+}
+
+.infoElement {
+  display: inline;
+  padding: 3px 8px;
+}
+
+.infoElement label {
+  padding-left: 2px;
+}
+
+.githubLogo {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  height: 40px;
+  width: 40px;
+  padding: 5px;
+  fill: #ddd;
+  background-color: rgba(0,0,0,0.5);
+}
+
+.githubLogo:hover{
+  fill: white;
+}
+
+.toggleInfoButton{
+  height: 35px;
+  width: 35px;
+  fill: #ccc;
+}
+
+@media (max-width: 500px) {
+  .title {
+    font-size: 10pt;
+    width: 300px;
+  }
+
+  header.hideTitle {
+    left: -301px;
+  }
+
+  .infoButtons {
+    flex-direction: column;
+    width: 100px;
+  }
+
+  .infoRow {
+    flex-direction: column;
+  }
+
+  .info.hideInfo {
+    left: -101px;
+  }
+
+  .navButton {
+    width: 30px;
+    height: 30px;
+  }
+
+  .toggleInfoButton {
+    align-self: flex-start;
+  }
+
+  .githubLogo {
+    height: 35px;
+    width: 35px;
+  }
+}
+
+@media (max-width: 350px) {
+  .title {
+    width: 200px;
+  }
+
+  header.hideTitle {
+    left: -201px;
+  }
+}
