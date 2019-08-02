@@ -4,7 +4,7 @@ Site that displays a slideshow with images/gifs obtained from reddit. By default
 Currently hosted at https://redditslideshow.netlify.com/
 
 ## Usage
-You can go to the next/previous slide by pressing `A` or `D`, or by using the arrow keys.
+You can go to the previous/next slide by pressing `A` or `D` respectively, or by using the arrow keys.
 
 You can add, for example, `/r/pics` to the url and data will be fetched from reddit.com/r/pics. Try the following URLs:
 
