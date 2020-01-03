@@ -41,12 +41,12 @@ const layout = (props) => {
             {title}
           </h1>
           { props.showTitle
-            ? <LeftArrowSVG className="toggleTitleButton toggleButton" onClick={props.titleClick}/>
-            : <RightArrowSVG className="toggleTitleButton toggleButton" onClick={props.titleClick}/> }
+            ? <LeftArrowSVG aria-label="Hide title" className="toggleTitleButton toggleButton" onClick={props.titleClick}/>
+            : <RightArrowSVG aria-label="Show title" className="toggleTitleButton toggleButton" onClick={props.titleClick}/> }
         </header>
 
-        <NextSlideSVG className="navButton nextButton" onClick={ props.nextHandler }/>
-        <PrevSlideSVG className="navButton prevButton" onClick={ props.prevHandler }/>
+        <NextSlideSVG aria-label="Next" className="navButton nextButton" onClick={ props.nextHandler }/>
+        <PrevSlideSVG aria-label="Previous" className="navButton prevButton" onClick={ props.prevHandler }/>
 
         <div className={infoClasses.join(' ')}>
           <div className="infoButtons">
@@ -69,11 +69,11 @@ const layout = (props) => {
             </div>
           </div>
           { props.showInfo
-            ? <LeftArrowSVG className="toggleInfoButton toggleButton" onClick={props.infoClick}/>
-            : <RightArrowSVG className="toggleInfoButton toggleButton" onClick={props.infoClick}/> }
+            ? <LeftArrowSVG aria-label="Hide info panel" className="toggleInfoButton toggleButton" onClick={props.infoClick}/>
+            : <RightArrowSVG aria-label="Show info panel" className="toggleInfoButton toggleButton" onClick={props.infoClick}/> }
         </div>
         
-        <a href="https://github.com/ismaelpadilla/reddit-slideshow" target="_blank" rel="noopener noreferrer">
+        <a href="https://github.com/ismaelpadilla/reddit-slideshow" aria-label="Source code" target="_blank" rel="noopener noreferrer">
           <GithubLogo className="githubLogo"/>
         </a>
       </div>
