@@ -137,8 +137,12 @@ class App extends Component {
   /**
    * Only keep valid urls and extensions.
    * Returns a valid url or null if url parameter isn't valid.
+   * Not secure urls are transformed to https.
    */
   filterUrl = (url) => {
+    // Transform http to https
+    url = url.replace("http://", "https://");
+    
     const domain = url.match(/:\/\/(.+)\//)[1];
     const extPattern = /\.[0-9a-z]+$/i;
     const match = url.match(extPattern);
