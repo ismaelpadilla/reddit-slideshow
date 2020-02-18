@@ -15,6 +15,7 @@ You can add, for example, `/r/pics` to the url and data will be fetched from red
 ## Todo
 - Detect / handle invalid URLs.
 - Better error handling.
+- Add tests.
 - NSFW filter (some logic already implemented).
 
 ---
