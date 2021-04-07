@@ -143,7 +143,7 @@ class App extends Component {
     // Transform http to https
     url = url.replace("http://", "https://");
     
-    const domain = url.match(/:\/\/(.+)\//)[1];
+    const domain = url.match(/:\/\/([^/]+)/)[1];
     const extPattern = /\.[0-9a-z]+$/i;
     const match = url.match(extPattern);
     const fileExt = match ? match[0] : null;
