@@ -12,6 +12,7 @@ class App extends Component {
     posts: [],
     currentPost: -1,
     prevPost: 0,
+    currentEndedPlaying: false,
     after: '', // to be sent as a part of a request, see reddit api docs
     awaitingResponse: false,
     showTitle: true, // show image title at top left
@@ -217,7 +218,7 @@ class App extends Component {
   /**
    * Go to next slide.
    */
-  nextSlideHandler = () => {
+  nextSlideHandler = (e) => {
     if ( this.state.currentPost < this.state.posts.length -1 ) {
       this.setState( (prevState, props) => {
         return {
@@ -257,6 +258,7 @@ class App extends Component {
           });
       }
     }
+    this.setState({ currentEndedPlaying: false });
     console.log("Next");
   };
 
@@ -366,6 +368,11 @@ class App extends Component {
     }
   }
 
+  currentEndedPlayingHandler = () => {
+    console.log("current ended playing")
+    this.setState({ currentEndedPlaying: true });
+  }
+
   render() {
     return (
       <div className="App">
@@ -387,6 +394,7 @@ class App extends Component {
           nsfwChecked={ this.state.showNSWF }
           touchStart={ this.touchStartHandler }
           touchEnd={ this.touchEndHandler }
+          currentEndedPlaying={ this.currentEndedPlayingHandler }
         />
       </div>
     );

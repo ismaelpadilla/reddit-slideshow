@@ -32,6 +32,10 @@ const layout = (props) => {
     slideClasses.push('hideCursor');
   }
 
+  const currentEndedPlayingHandler = () => {
+    props.currentEndedPlaying();
+  }
+
 
   return (
     <div className="layout" onTouchStart={props.touchStart} onTouchEnd={props.touchEnd}>
@@ -78,7 +82,7 @@ const layout = (props) => {
         </a>
       </div>
 
-      { link ? <Slide url={ link } classes={ slideClasses.concat(['current']) } key={ id }/> : null }
+      { link ? <Slide url={ link } classes={ slideClasses.concat(['current']) } key={ id } currentEndedPLaying = { currentEndedPlayingHandler }/> : null }
       { props.prev !== props.post ? <Slide url={ prevLink } classes={ slideClasses.concat(['prev']) } key={ prevId } /> : null }
     </div>
   );
