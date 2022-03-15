@@ -1,19 +1,19 @@
-import React, { Component } from 'react';
-import axios from 'axios';
+import React, { Component } from "react";
+import axios from "axios";
 
-import Layout from '../components/Layout/Layout';
-import './App.css';
+import Layout from "../components/Layout/Layout";
+import "./App.css";
 
 class App extends Component {
   hideUI = false;
   state = {
     // request: '/r/pics.json',
-    request: window.location.pathname + '.json',
+    request: window.location.pathname + ".json",
     posts: [],
     currentPost: -1,
     prevPost: 0,
     currentEndedPlaying: false,
-    after: '', // to be sent as a part of a request, see reddit api docs
+    after: "", // to be sent as a part of a request, see reddit api docs
     awaitingResponse: false,
     showTitle: true, // show image title at top left
     showInfo: true, // show info and buttons at bottom right
@@ -21,9 +21,8 @@ class App extends Component {
     hideUI: this.hideUI,
     hideUIChecked: this.hideUI,
     showNSWF: true,
-    touchStartX: 0 // used for swipe gestures in mobile
+    touchStartX: 0, // used for swipe gestures in mobile
   };
-
 
   /**
    * This makes sure we access the right reddit url based on how the user
@@ -31,39 +30,40 @@ class App extends Component {
    */
   componentDidMount = () => {
     // Get initial posts via http, set state
-    if ( !this.state.awaitingResponse ) {
-      this.setState( { awaitingResponse: true } );
-      axios.get( this.state.request )
-        .then(
-          response => {
-            // posts are in response.data.data.children
-            const after = response.data.data.after;
-            this.getPosts(response.data.data.children).then ( (posts) =>
-              {
-                // console.log('after', after);
-                // console.log('reduced posts', posts);
-                this.setState( {
-                  posts: [...posts],
-                  after: after,
-                  currentPost: 0,
-                  awaitingResponse: false
-                  // interval: setInterval(this.nextSlideHandler, 2000)
-                });
-                if (this.state.auto) {
-                  this.setState({ interval: setInterval(this.nextSlideHandler, 5000) });
-                }
-                // console.log("initialized state", this.state);
-              }).catch(function (error) {
-                console.log(error);
+    if (!this.state.awaitingResponse) {
+      this.setState({ awaitingResponse: true });
+      axios
+        .get(this.state.request)
+        .then((response) => {
+          // posts are in response.data.data.children
+          const after = response.data.data.after;
+          this.getPosts(response.data.data.children)
+            .then((posts) => {
+              // console.log('after', after);
+              // console.log('reduced posts', posts);
+              this.setState({
+                posts: [...posts],
+                after: after,
+                currentPost: 0,
+                awaitingResponse: false,
+                // interval: setInterval(this.nextSlideHandler, 2000)
               });
-          })
+              if (this.state.auto) {
+                this.setState({ interval: setInterval(() => this.nextSlideHandler(false), 5000) });
+              }
+              // console.log("initialized state", this.state);
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+        })
         .catch(function (error) {
           console.log(error);
         });
     }
-    document.addEventListener('mousemove', this.mouseMoveHandler);
-    document.addEventListener('keydown', this.keyDownHandler);
-  }
+    document.addEventListener("mousemove", this.mouseMoveHandler);
+    document.addEventListener("keydown", this.keyDownHandler);
+  };
 
   /**
    * Prevent unnecessary rerenders.
@@ -74,11 +74,11 @@ class App extends Component {
      * the touch start event modifies the state but it doesn't have an impact
      * on the elements being shown.
      */
-    if (this.state.touchStartX !== nextState.touchStartX){
+    if (this.state.touchStartX !== nextState.touchStartX) {
       return false;
     }
     return true;
-  }
+  };
 
   /**
    * Handle key presses.
@@ -88,9 +88,9 @@ class App extends Component {
     if (event.key === "ArrowLeft" || event.code === "KeyA") {
       this.prevSlideHandler();
     } else if (event.key === "ArrowRight" || event.code === "KeyD") {
-      this.nextSlideHandler();
+      this.nextSlideHandler(true);
     }
-  }
+  };
 
   /**
    * Get posts from a server response
@@ -105,7 +105,7 @@ class App extends Component {
    */
   getPosts = (children) => {
     // Filter and map at the same time
-    const posts = children.reduce( this.filterPosts, [] );
+    const posts = children.reduce(this.filterPosts, []);
     // Update the posts, get urls to gfycat mp4s (see updatePosts fore more info).
     const updatedPosts = this.updatePosts(posts);
     // console.log('updated posts', updatedPosts);
@@ -126,8 +126,9 @@ class App extends Component {
           title: child.data.title,
           id: child.data.id,
           nsfw: child.data.over_18,
-          urlToComments: 'https://www.reddit.com' + child.data.permalink,
-          link: filteredUrl
+          urlToComments: "https://www.reddit.com" + child.data.permalink,
+          link: filteredUrl.url,
+          extension: filteredUrl.extension,
         });
       }
     }
@@ -143,17 +144,17 @@ class App extends Component {
   filterUrl = (url) => {
     // Transform http to https
     url = url.replace("http://", "https://");
-    
+
     const domain = url.match(/:\/\/(.+)\//)[1];
     const extPattern = /\.[0-9a-z]+$/i;
     const match = url.match(extPattern);
     const fileExt = match ? match[0] : null;
-    const supportedExtensions = [".jpg", ".jpeg", ".png", ".bmp",".gif", ".gifv"];
-    if ( domain === "gfycat.com" || supportedExtensions.includes(fileExt) ) {
-      return url;
+    const supportedExtensions = [".jpg", ".jpeg", ".png", ".bmp", ".gif", ".gifv"];
+    if (domain === "gfycat.com" || supportedExtensions.includes(fileExt)) {
+      return { url, extension: fileExt };
     }
-    if ( domain === "imgur.com" ) {
-      return url + ".jpg";
+    if (domain === "imgur.com") {
+      return { url: url + ".jpg", extension: fileExt };
     }
     return null;
   };
@@ -175,7 +176,7 @@ class App extends Component {
       const domain = post.link.match(/:\/\/(.+)\//)[1];
 
       // In order to play gfycat videos we must get the mp4 url from the video id
-      if (domain === 'gfycat.com') {
+      if (domain === "gfycat.com") {
         const gfyId = post.link.match(/([.0-9a-zA-Z]+)(-|$)/)[1];
         /*
          * gfyId regex clarification: sometimes gfys have dashes ('-') in their url.
@@ -183,20 +184,31 @@ class App extends Component {
          */
 
         // Wait until some images are correct so we can render something
-        if ( counter < 3) {
-          const response = await axios.get( "https://api.gfycat.com/v1/gfycats/" + gfyId );
+        if (counter < 3) {
+          const response = await axios.get("https://api.gfycat.com/v1/gfycats/" + gfyId);
           post.link = response.data.gfyItem.mp4Url;
         } else {
-          axios.get( "https://api.gfycat.com/v1/gfycats/" + gfyId ).then( (response) =>
-            {
+          axios
+            .get("https://api.gfycat.com/v1/gfycats/" + gfyId)
+            .then((response) => {
               post.link = response.data.gfyItem.mp4Url;
-            }).catch(function (error) {
+            })
+            .catch(function (error) {
               console.log(error);
             });
         }
+        const extPattern = /\.[0-9a-z]+$/i;
+        const match = post.link.match(extPattern);
+        const fileExt = match ? match[0] : null;
+        post.extension = fileExt;
+        if (fileExt === ".gifv" || fileExt === ".mp4") {
+          post.isVideo = true;
+        } else {
+          post.isVideo = false;
+        }
         counter++;
       }
-    };
+    }
     return posts;
   };
 
@@ -204,11 +216,11 @@ class App extends Component {
    * Go to previous slide.
    */
   prevSlideHandler = () => {
-    if ( this.state.currentPost > 0 ) {
-      this.setState( (prevState, props) => {
+    if (this.state.currentPost > 0) {
+      this.setState((prevState, props) => {
         return {
           prevPost: prevState.currentPost,
-          currentPost: prevState.currentPost -1
+          currentPost: prevState.currentPost - 1,
         };
       });
     }
@@ -216,43 +228,53 @@ class App extends Component {
   };
 
   /**
-   * Go to next slide.
+   * Handle nextSlide event. If it was fired manually, always go to next slide.
+   * If it was fired automatically and we are playing a video, go to next slide only
+   * if current video has finished playing.
    */
-  nextSlideHandler = (e) => {
-    if ( this.state.currentPost < this.state.posts.length -1 ) {
-      this.setState( (prevState, props) => {
+  nextSlideHandler = (manual, e) => {
+    // do nothing if current video didn't end playing
+    const currentIsVideo = this.state.posts[this.state.currentPost].isVideo;
+    if (!manual && currentIsVideo && !this.state.currentEndedPlaying) {
+      console.log("Current video still playing!");
+      return;
+    }
+
+    if (this.state.currentPost < this.state.posts.length - 1) {
+      this.setState((prevState, props) => {
         return {
           prevPost: prevState.currentPost,
-          currentPost: prevState.currentPost +1
+          currentPost: prevState.currentPost + 1,
         };
       });
-    };
+    }
 
     // Load more posts when close to reaching the end
-    if ( this.state.currentPost > this.state.posts.length -4 ) {
-      if ( !this.state.awaitingResponse ) {
-        this.setState( { awaitingResponse: true } );
-        console.log('fetching aditional posts');
-        axios.get(this.state.request + '?after=' + this.state.after)
-          .then(
-            response => {
-              // console.log(response); // posts are in response.data.data.children
-              const after = response.data.data.after;
-              this.getPosts(response.data.data.children).then ( (posts) =>
-              {
+    if (this.state.currentPost > this.state.posts.length - 4) {
+      if (!this.state.awaitingResponse) {
+        this.setState({ awaitingResponse: true });
+        console.log("fetching aditional posts");
+        axios
+          .get(this.state.request + "?after=" + this.state.after)
+          .then((response) => {
+            // console.log(response); // posts are in response.data.data.children
+            const after = response.data.data.after;
+            this.getPosts(response.data.data.children)
+              .then((posts) => {
                 // console.log('after', after);
                 // console.log('reduced posts', posts);
-                this.setState( (state, props) => {
+                this.setState((state, props) => {
                   return {
                     posts: [...state.posts, ...posts],
                     after: after,
-                    awaitingResponse: false
-                  }
+                    awaitingResponse: false,
+                  };
                 });
-              }).catch(function (error) {
+              })
+              .catch(function (error) {
                 console.log(error);
               });
-            })
+          })
           .catch(function (error) {
             console.log(error);
           });
@@ -266,23 +288,23 @@ class App extends Component {
    * Hide/show title at the top right.
    */
   toggleTitleHandler = () => {
-    this.setState( (state,props) => {
+    this.setState((state, props) => {
       return {
-        showTitle: ! state.showTitle
-      }
-    } );
+        showTitle: !state.showTitle,
+      };
+    });
   };
 
   /**
    * Hide/show info panel at the bottom left.
    */
   toggleInfoHandler = () => {
-    console.log('toggle info');
-    this.setState( (state,props) => {
+    console.log("toggle info");
+    this.setState((state, props) => {
       return {
-        showInfo: ! state.showInfo
-      }
-    } );
+        showInfo: !state.showInfo,
+      };
+    });
   };
 
   /**
@@ -292,11 +314,11 @@ class App extends Component {
     if (event.target.checked) {
       this.setState({
         auto: true,
-        interval: setInterval(this.nextSlideHandler, 5000)
+        interval: setInterval(() => this.nextSlideHandler(false), 5000),
       });
     } else {
       this.setState({ auto: false });
-      clearInterval( this.state.interval );
+      clearInterval(this.state.interval);
     }
   };
 
@@ -307,14 +329,14 @@ class App extends Component {
     if (event.target.checked) {
       this.setState({
         hideUI: true,
-        hideUIChecked: true
+        hideUIChecked: true,
       });
     } else {
       this.setState({
         hideUI: false,
-        hideUIChecked: false
-       });
-      clearInterval( this.state.interval );
+        hideUIChecked: false,
+      });
+      clearInterval(this.state.interval);
     }
   };
 
@@ -323,7 +345,7 @@ class App extends Component {
    */
   nsfwCheckboxHandler = (event) => {
     this.setState({ showNSWF: event.target.checked });
-  }
+  };
 
   /**
    * Handle mouse movement.
@@ -331,10 +353,10 @@ class App extends Component {
    */
   mouseMoveHandler = () => {
     if (this.state.hideUI) {
-      this.setState({ hideUI:false });
-      setTimeout( this.hideUI, 3000);
+      this.setState({ hideUI: false });
+      setTimeout(this.hideUI, 3000);
     }
-  }
+  };
 
   /**
    * Hide UI, this method should be called from the timer created in
@@ -343,7 +365,7 @@ class App extends Component {
    * after moving the mouse so as not to hide the UI in that case.
    */
   hideUI = () => {
-    if(this.state.hideUIChecked) {
+    if (this.state.hideUIChecked) {
       this.setState({ hideUI: true });
     }
   };
@@ -354,51 +376,51 @@ class App extends Component {
    */
   touchStartHandler = (event) => {
     this.setState({ touchStartX: event.targetTouches[0].clientX });
-  }
+  };
 
   /**
    * On touch end, compare touch position to touch start (saved in state).
    * Change slides if both points are far enough.
    */
   touchEndHandler = (event) => {
-    if ( event.changedTouches[0].clientX < this.state.touchStartX - 50 ) {
-      this.nextSlideHandler();
-    } else if ( event.changedTouches[0].clientX > this.state.touchStartX + 50) {
+    if (event.changedTouches[0].clientX < this.state.touchStartX - 50) {
+      this.nextSlideHandler(true);
+    } else if (event.changedTouches[0].clientX > this.state.touchStartX + 50) {
       this.prevSlideHandler();
     }
-  }
+  };
 
   currentEndedPlayingHandler = () => {
-    console.log("current ended playing")
     this.setState({ currentEndedPlaying: true });
-  }
+  };
 
   render() {
     return (
       <div className="App">
-        <Layout className="App"
-          post={ this.state.posts.length ? (this.state.posts[ this.state.currentPost ]) : null }
-          prev={ this.state.posts.length ? (this.state.posts[ this.state.prevPost ]) : null }
-          prevHandler={ this.prevSlideHandler }
-          nextHandler={ this.nextSlideHandler }
-          showTitle={ this.state.showTitle }
-          showInfo={ this.state.showInfo }
-          titleClick={ this.toggleTitleHandler }
-          infoClick={ this.toggleInfoHandler }
-          autoPlay={ this.state.auto }
-          autoCheckboxHandler={ this.autoCheckboxHandler }
-          hideUI={ this.state.hideUI }
-          hideUIChecked={ this.state.hideUIChecked }
-          hideUICheckboxHandler={ this.hideUICheckboxHandler }
-          nsfwCheckboxHandler={ this.nsfwCheckboxHandler }
-          nsfwChecked={ this.state.showNSWF }
-          touchStart={ this.touchStartHandler }
-          touchEnd={ this.touchEndHandler }
-          currentEndedPlaying={ this.currentEndedPlayingHandler }
+        <Layout
+          className="App"
+          post={this.state.posts.length ? this.state.posts[this.state.currentPost] : null}
+          prev={this.state.posts.length ? this.state.posts[this.state.prevPost] : null}
+          prevHandler={this.prevSlideHandler}
+          nextHandler={(e) => this.nextSlideHandler(true, e)}
+          showTitle={this.state.showTitle}
+          showInfo={this.state.showInfo}
+          titleClick={this.toggleTitleHandler}
+          infoClick={this.toggleInfoHandler}
+          autoPlay={this.state.auto}
+          autoCheckboxHandler={this.autoCheckboxHandler}
+          hideUI={this.state.hideUI}
+          hideUIChecked={this.state.hideUIChecked}
+          hideUICheckboxHandler={this.hideUICheckboxHandler}
+          nsfwCheckboxHandler={this.nsfwCheckboxHandler}
+          nsfwChecked={this.state.showNSWF}
+          touchStart={this.touchStartHandler}
+          touchEnd={this.touchEndHandler}
+          currentEndedPlaying={this.currentEndedPlayingHandler}
         />
       </div>
     );
-  };
+  }
 }
 
 export default App;
