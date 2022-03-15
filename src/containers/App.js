@@ -18,6 +18,7 @@ class App extends Component {
     showTitle: true, // show image title at top left
     showInfo: true, // show info and buttons at bottom right
     auto: false, // autoplay
+    sound: false,
     hideUI: this.hideUI,
     hideUIChecked: this.hideUI,
     showNSWF: true,
@@ -323,6 +324,19 @@ class App extends Component {
   };
 
   /**
+   * Handle sound checkbox.
+   */
+  soundCheckboxHandler = (event) => {
+    if (event.target.checked) {
+      this.setState({
+        sound: true
+      });
+    } else {
+      this.setState({ sound: false });
+    }
+  };
+
+  /**
    * Handle hideUI checkbox.
    */
   hideUICheckboxHandler = (event) => {
@@ -409,6 +423,8 @@ class App extends Component {
           infoClick={this.toggleInfoHandler}
           autoPlay={this.state.auto}
           autoCheckboxHandler={this.autoCheckboxHandler}
+          sound={this.state.sound}
+          soundCheckboxHandler={this.soundCheckboxHandler}
           hideUI={this.state.hideUI}
           hideUIChecked={this.state.hideUIChecked}
           hideUICheckboxHandler={this.hideUICheckboxHandler}

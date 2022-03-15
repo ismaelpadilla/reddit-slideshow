@@ -25,13 +25,13 @@ const Slide = (props) => {
     // Imgur videos can be linked by using .mp4 extension instead of .gifv
     if (fileExt === ".gifv") {
       return (
-        <video autoPlay loop muted className={props.classes.join(" ") + " video"} onPlaying={endedHandler}>
+        <video autoPlay loop muted={!props.sound} className={props.classes.join(" ") + " video"} onPlaying={endedHandler}>
           <source src={props.url.replace(".gifv", ".mp4")} type="video/mp4" />
         </video>
       );
     } else if (fileExt === ".mp4") {
       return (
-        <video autoPlay loop muted className={props.classes.join(" ") + " video"} onPlaying={endedHandler}>
+        <video autoPlay loop muted={!props.sound} className={props.classes.join(" ") + " video"} onPlaying={endedHandler}>
           <source src={props.url.replace(".mp4", ".webm")} type="video/webm" />
           <source src={props.url} type="video/mp4" />
         </video>

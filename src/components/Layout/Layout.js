@@ -95,6 +95,18 @@ const layout = (props) => {
                 <label htmlFor="hideUI">Hide UI</label>
               </div>
             </div>
+            <div className="infoRow">
+              <div className="infoElement">
+                <input
+                  type="checkbox"
+                  id="sound"
+                  name="sound"
+                  onChange={props.soundCheckboxHandler}
+                  checked={props.sound}
+                />
+                <label htmlFor="sound">Sound</label>
+              </div>
+            </div>
           </div>
           {props.showInfo ? (
             <LeftArrowSVG
@@ -128,6 +140,7 @@ const layout = (props) => {
           classes={slideClasses.concat(["current"])}
           key={id}
           currentEndedPLaying={currentEndedPlayingHandler}
+          sound={props.sound}
         />
       ) : null}
       {props.prev !== props.post ? (
