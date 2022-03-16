@@ -5,7 +5,6 @@ import Layout from "../components/Layout/Layout";
 import "./App.css";
 
 class App extends Component {
-  hideUI = false;
   state = {
     // request: '/r/pics.json',
     request: window.location.pathname + ".json",
@@ -19,8 +18,8 @@ class App extends Component {
     showInfo: true, // show info and buttons at bottom right
     auto: false, // autoplay
     sound: false,
-    hideUI: this.hideUI,
-    hideUIChecked: this.hideUI,
+    hideUI: false,
+    hideUIChecked: false,
     showNSWF: true,
     touchStartX: 0, // used for swipe gestures in mobile
   };
